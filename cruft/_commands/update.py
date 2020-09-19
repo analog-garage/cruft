@@ -247,6 +247,16 @@ def _apply_patch_with_rejections(diff: str, expanded_dir_path: Path):
         )
     except CalledProcessError as error:
         typer.secho(error.stderr.decode(), err=True)
+        expanded_dir_abs_path = expanded_dir_path.absolute()
+        diff_path = expanded_dir_abs_path.parent.joinpath(
+            f"{expanded_dir_abs_path.name}.cruft.diff.txt"
+        )
+        typer.secho(
+            f"Diff that caused error stored in {diff_path}",
+            fg=typer.colors.YELLOW,
+        )
+        with diff_path.open('w') as f:
+            f.write(diff)
         typer.secho(
             (
                 "Project directory may have *.rej files reflecting merge conflicts with the update."
